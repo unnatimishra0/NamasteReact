@@ -28837,41 +28837,16 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"node_modules/react-dom/client.js":[function(require,module,exports) {
-'use strict';
-
-var m = require('react-dom');
-if ("development" === 'production') {
-  exports.createRoot = m.createRoot;
-  exports.hydrateRoot = m.hydrateRoot;
-} else {
-  var i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-  exports.createRoot = function (c, o) {
-    i.usingClientEntryPoint = true;
-    try {
-      return m.createRoot(c, o);
-    } finally {
-      i.usingClientEntryPoint = false;
-    }
-  };
-  exports.hydrateRoot = function (c, h, o) {
-    i.usingClientEntryPoint = true;
-    try {
-      return m.hydrateRoot(c, h, o);
-    } finally {
-      i.usingClientEntryPoint = false;
-    }
-  };
-}
-},{"react-dom":"node_modules/react-dom/index.js"}],"src/utils/constant.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"src/utils/constant.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RES_LOGO = exports.CDN_URL = void 0;
+exports.RES_LOGO = exports.MENU_API = exports.CDN_URL = void 0;
 var CDN_URL = exports.CDN_URL = "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/";
 var RES_LOGO = exports.RES_LOGO = "https://th.bing.com/th/id/OIP.2g-dT3nt55YRPRmOlkYxsQHaE8?w=238&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7";
+var MENU_API = exports.MENU_API = "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.4843&lng=80.3325332&restaurantId=";
 },{}],"node_modules/@remix-run/router/dist/router.js":[function(require,module,exports) {
 var define;
 "use strict";
@@ -28939,7 +28914,7 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 /**
- * @remix-run/router v1.14.1
+ * @remix-run/router v1.14.2
  *
  * Copyright (c) Remix Software Inc.
  *
@@ -29618,7 +29593,7 @@ function rankRouteBranches(branches) {
     }));
   });
 }
-var paramRe = /^:\w+$/;
+var paramRe = /^:[\w-]+$/;
 var dynamicSegmentValue = 3;
 var indexRouteValue = 2;
 var emptySegmentValue = 1;
@@ -29713,7 +29688,7 @@ function generatePath(originalPath, params) {
       // Apply the splat
       return stringify(params[star]);
     }
-    var keyMatch = segment.match(/^:(\w+)(\??)$/);
+    var keyMatch = segment.match(/^:([\w-]+)(\??)$/);
     if (keyMatch) {
       var _keyMatch = _slicedToArray(keyMatch, 3),
         key = _keyMatch[1],
@@ -29790,7 +29765,7 @@ function compilePath(path, caseSensitive, end) {
   var regexpSource = "^" + path.replace(/\/*\*?$/, "") // Ignore trailing / and /*, we'll handle it below
   .replace(/^\/*/, "/") // Make sure it has a leading /
   .replace(/[\\.*+^${}|()[\]]/g, "\\$&") // Escape special regex chars
-  .replace(/\/:(\w+)(\?)?/g, function (_, paramName, isOptional) {
+  .replace(/\/:([\w-]+)(\?)?/g, function (_, paramName, isOptional) {
     params.push({
       paramName: paramName,
       isOptional: isOptional != null
@@ -33235,7 +33210,7 @@ function _callLoaderOrAction() {
           return _context17.finish(48);
         case 51:
           if (!isResponse(result)) {
-            _context17.next = 83;
+            _context17.next = 87;
             break;
           }
           status = result.status; // Process redirects
@@ -33292,33 +33267,42 @@ function _callLoaderOrAction() {
           contentType = result.headers.get("Content-Type"); // Check between word boundaries instead of startsWith() due to the last
           // paragraph of https://httpwg.org/specs/rfc9110.html#field.content-type
           if (!(contentType && /\bapplication\/json\b/.test(contentType))) {
-            _context17.next = 72;
+            _context17.next = 76;
             break;
           }
-          _context17.next = 69;
-          return result.json();
-        case 69:
-          data = _context17.sent;
-          _context17.next = 75;
-          break;
-        case 72:
+          if (!(result.body == null)) {
+            _context17.next = 71;
+            break;
+          }
+          data = null;
           _context17.next = 74;
-          return result.text();
-        case 74:
-          data = _context17.sent;
-        case 75:
-          _context17.next = 80;
           break;
-        case 77:
-          _context17.prev = 77;
+        case 71:
+          _context17.next = 73;
+          return result.json();
+        case 73:
+          data = _context17.sent;
+        case 74:
+          _context17.next = 79;
+          break;
+        case 76:
+          _context17.next = 78;
+          return result.text();
+        case 78:
+          data = _context17.sent;
+        case 79:
+          _context17.next = 84;
+          break;
+        case 81:
+          _context17.prev = 81;
           _context17.t1 = _context17["catch"](64);
           return _context17.abrupt("return", {
             type: ResultType.error,
             error: _context17.t1
           });
-        case 80:
+        case 84:
           if (!(resultType === ResultType.error)) {
-            _context17.next = 82;
+            _context17.next = 86;
             break;
           }
           return _context17.abrupt("return", {
@@ -33326,25 +33310,25 @@ function _callLoaderOrAction() {
             error: new ErrorResponseImpl(status, result.statusText, data),
             headers: result.headers
           });
-        case 82:
+        case 86:
           return _context17.abrupt("return", {
             type: ResultType.data,
             data: data,
             statusCode: result.status,
             headers: result.headers
           });
-        case 83:
+        case 87:
           if (!(resultType === ResultType.error)) {
-            _context17.next = 85;
+            _context17.next = 89;
             break;
           }
           return _context17.abrupt("return", {
             type: resultType,
             error: result
           });
-        case 85:
+        case 89:
           if (!isDeferredData(result)) {
-            _context17.next = 87;
+            _context17.next = 91;
             break;
           }
           return _context17.abrupt("return", {
@@ -33353,16 +33337,16 @@ function _callLoaderOrAction() {
             statusCode: (_result$init = result.init) == null ? void 0 : _result$init.status,
             headers: ((_result$init2 = result.init) == null ? void 0 : _result$init2.headers) && new Headers(result.init.headers)
           });
-        case 87:
+        case 91:
           return _context17.abrupt("return", {
             type: ResultType.data,
             data: result
           });
-        case 88:
+        case 92:
         case "end":
           return _context17.stop();
       }
-    }, _callee16, null, [[2, 44, 48, 51], [64, 77]]);
+    }, _callee16, null, [[2, 44, 48, 51], [64, 81]]);
   }));
   return _callLoaderOrAction.apply(this, arguments);
 }
@@ -34165,7 +34149,7 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); } /**
- * React Router v6.21.1
+ * React Router v6.21.2
  *
  * Copyright (c) Remix Software Inc.
  *
@@ -36007,7 +35991,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; } /**
- * React Router DOM v6.21.1
+ * React Router DOM v6.21.2
  *
  * Copyright (c) Remix Software Inc.
  *
@@ -36331,6 +36315,8 @@ var START_TRANSITION = "startTransition";
 var startTransitionImpl = React[START_TRANSITION];
 var FLUSH_SYNC = "flushSync";
 var flushSyncImpl = ReactDOM[FLUSH_SYNC];
+var USE_ID = "useId";
+var useIdImpl = React[USE_ID];
 function startTransitionSafe(cb) {
   if (startTransitionImpl) {
     startTransitionImpl(cb);
@@ -37183,13 +37169,17 @@ function useFetcher(_temp3) {
   !route ? "development" !== "production" ? (0, _router.UNSAFE_invariant)(false, "useFetcher must be used inside a RouteContext") : (0, _router.UNSAFE_invariant)(false) : void 0;
   !(routeId != null) ? "development" !== "production" ? (0, _router.UNSAFE_invariant)(false, "useFetcher can only be used on routes that contain a unique \"id\"") : (0, _router.UNSAFE_invariant)(false) : void 0;
   // Fetcher key handling
-  var _React$useState19 = React.useState(key || ""),
+  // OK to call conditionally to feature detect `useId`
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  var defaultKey = useIdImpl ? useIdImpl() : "";
+  var _React$useState19 = React.useState(key || defaultKey),
     _React$useState20 = _slicedToArray(_React$useState19, 2),
     fetcherKey = _React$useState20[0],
     setFetcherKey = _React$useState20[1];
   if (key && key !== fetcherKey) {
     setFetcherKey(key);
   } else if (!fetcherKey) {
+    // We will only fall through here when `useId` is not available
     setFetcherKey(getUniqueFetcherId());
   }
   // Registration/cleanup
@@ -37467,7 +37457,39 @@ function useViewTransitionState(to, opts) {
   return (0, _router.matchPath)(path.pathname, nextPath) != null || (0, _router.matchPath)(path.pathname, currentPath) != null;
 }
 //#endregion
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router":"node_modules/react-router/dist/index.js","@remix-run/router":"node_modules/@remix-run/router/dist/router.js"}],"src/component/Header.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router":"node_modules/react-router/dist/index.js","@remix-run/router":"node_modules/@remix-run/router/dist/router.js"}],"src/utils/useOnlineStatus.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = require("react");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var useOnlineStatus = function useOnlineStatus() {
+  var _useState = (0, _react.useState)(true),
+    _useState2 = _slicedToArray(_useState, 2),
+    onlineStatus = _useState2[0],
+    setOnlineStatus = _useState2[1];
+  (0, _react.useEffect)(function () {
+    window.addEventListener('offline', function () {
+      setOnlineStatus(false);
+    });
+    window.addEventListener('online', function () {
+      setOnlineStatus(true);
+    });
+  });
+
+  //boolean value
+  return onlineStatus;
+};
+var _default = exports.default = useOnlineStatus;
+},{"react":"node_modules/react/index.js"}],"src/component/Header.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37477,6 +37499,8 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _constant = require("../utils/constant");
 var _reactRouterDom = require("react-router-dom");
+var _useOnlineStatus = _interopRequireDefault(require("../utils/useOnlineStatus"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -37490,6 +37514,7 @@ var Header = function Header() {
     _useState2 = _slicedToArray(_useState, 2),
     btnNameReact = _useState2[0],
     setBtnNameReact = _useState2[1];
+  var onlineStatus = (0, _useOnlineStatus.default)();
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "header"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -37499,7 +37524,7 @@ var Header = function Header() {
     src: _constant.RES_LOGO
   })), /*#__PURE__*/_react.default.createElement("div", {
     className: "nav-items"
-  }, /*#__PURE__*/_react.default.createElement("ul", null, /*#__PURE__*/_react.default.createElement("li", null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
+  }, /*#__PURE__*/_react.default.createElement("ul", null, /*#__PURE__*/_react.default.createElement("li", null, "Online Status:", onlineStatus ? '✅' : '🔴'), /*#__PURE__*/_react.default.createElement("li", null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
     to: "/"
   }, "Home")), /*#__PURE__*/_react.default.createElement("li", null, " ", /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
     to: "/about"
@@ -37507,7 +37532,9 @@ var Header = function Header() {
     to: "/contact"
   }, "Contact us")), /*#__PURE__*/_react.default.createElement("li", null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
     to: "/cart"
-  }, "Cart")), /*#__PURE__*/_react.default.createElement("button", {
+  }, "Cart")), /*#__PURE__*/_react.default.createElement("li", null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
+    to: "/grocery"
+  }, "Grocery")), /*#__PURE__*/_react.default.createElement("button", {
     className: "login",
     onClick: function onClick() {
       btnNameReact === 'Login' ? setBtnNameReact("Logout") : setBtnNameReact('Login');
@@ -37515,7 +37542,7 @@ var Header = function Header() {
   }, btnNameReact))));
 };
 var _default = exports.default = Header;
-},{"react":"node_modules/react/index.js","../utils/constant":"src/utils/constant.js","react-router-dom":"node_modules/react-router-dom/dist/index.js"}],"src/component/RestaurantCard.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../utils/constant":"src/utils/constant.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../utils/useOnlineStatus":"src/utils/useOnlineStatus.js"}],"src/component/RestaurantCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37584,6 +37611,8 @@ exports.default = void 0;
 var _RestaurantCard = _interopRequireDefault(require("./RestaurantCard"));
 var _react = _interopRequireWildcard(require("react"));
 var _Shimmer = _interopRequireDefault(require("./Shimmer"));
+var _reactRouterDom = require("react-router-dom");
+var _useOnlineStatus = _interopRequireDefault(require("../utils/useOnlineStatus"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -37635,7 +37664,7 @@ var Body = function Body() {
           case 6:
             json = _context.sent;
             console.log(json);
-            restaurants = (json === null || json === void 0 || (_json$data = json.data) === null || _json$data === void 0 || (_json$data = _json$data.cards[5]) === null || _json$data === void 0 || (_json$data = _json$data.card) === null || _json$data === void 0 || (_json$data = _json$data.card) === null || _json$data === void 0 || (_json$data = _json$data.gridElements) === null || _json$data === void 0 || (_json$data = _json$data.infoWithStyle) === null || _json$data === void 0 ? void 0 : _json$data.restaurants) || [];
+            restaurants = (json === null || json === void 0 || (_json$data = json.data) === null || _json$data === void 0 || (_json$data = _json$data.cards[1]) === null || _json$data === void 0 || (_json$data = _json$data.card) === null || _json$data === void 0 || (_json$data = _json$data.card) === null || _json$data === void 0 || (_json$data = _json$data.gridElements) === null || _json$data === void 0 || (_json$data = _json$data.infoWithStyle) === null || _json$data === void 0 ? void 0 : _json$data.restaurants) || [];
             console.log(restaurants);
             setListOfRestaurant(restaurants);
             setFilteredRestaurant(restaurants);
@@ -37655,6 +37684,11 @@ var Body = function Body() {
       return _ref.apply(this, arguments);
     };
   }();
+  //use of custom hook
+  var onlineStatus = (0, _useOnlineStatus.default)();
+  if (onlineStatus === false) {
+    return /*#__PURE__*/_react.default.createElement("h1", null, "Looks like you are offline ...Please Check your Internet Connection");
+  }
   var handleSearch = function handleSearch() {
     var filteredRestaurant = listOfRestaurants.filter(function (res) {
       return res.info.name.toLowerCase().includes(searchText.toLowerCase());
@@ -37682,14 +37716,16 @@ var Body = function Body() {
   }, "Top Rated Restaurant")), /*#__PURE__*/_react.default.createElement("div", {
     className: "res-container"
   }, filteredRestaurant.map(function (restaurant) {
-    return /*#__PURE__*/_react.default.createElement(_RestaurantCard.default, {
+    return /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
       key: restaurant.info.id,
+      to: '/restaurants/' + restaurant.info.id
+    }, " ", /*#__PURE__*/_react.default.createElement(_RestaurantCard.default, {
       resData: restaurant
-    });
+    }));
   })));
 };
 var _default = exports.default = Body;
-},{"./RestaurantCard":"src/component/RestaurantCard.js","react":"node_modules/react/index.js","./Shimmer":"src/component/Shimmer.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"./RestaurantCard":"src/component/RestaurantCard.js","react":"node_modules/react/index.js","./Shimmer":"src/component/Shimmer.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../utils/useOnlineStatus":"src/utils/useOnlineStatus.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -37744,7 +37780,38 @@ module.exports = reloadCSS;
 var reloadCSS = require('_css_loader');
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/component/About.js":[function(require,module,exports) {
+},{"_css_loader":"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/component/User.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = _interopRequireWildcard(require("react"));
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+// using props of like this which is defined in about.js
+var User = function User(_ref) {
+  var name = _ref.name;
+  //defining  a state
+  var _useState = (0, _react.useState)(0),
+    _useState2 = _slicedToArray(_useState, 1),
+    count = _useState2[0];
+  var _useState3 = (0, _react.useState)(1),
+    _useState4 = _slicedToArray(_useState3, 1),
+    count2 = _useState4[0];
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "user-card"
+  }, /*#__PURE__*/_react.default.createElement("h1", null), /*#__PURE__*/_react.default.createElement("h1", null, "Count=", count), /*#__PURE__*/_react.default.createElement("h1", null, "Count2=", count2), /*#__PURE__*/_react.default.createElement("h2", null, "Name ", name), /*#__PURE__*/_react.default.createElement("h2", null, " Location :kanpur"), /*#__PURE__*/_react.default.createElement("h1", null, "Contact unnatimishra19@gmail.com"));
+};
+var _default = exports.default = User;
+},{"react":"node_modules/react/index.js"}],"src/component/UserClass.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37753,11 +37820,178 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _react = _interopRequireDefault(require("react"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-var About = function About() {
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h1", null, "about page "));
-};
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var UserClass = /*#__PURE__*/function (_React$Component) {
+  _inherits(UserClass, _React$Component);
+  var _super = _createSuper(UserClass);
+  // using props of like this which is defined in about.js
+
+  function UserClass(props) {
+    var _this;
+    _classCallCheck(this, UserClass);
+    _this = _super.call(this, props);
+    _this.state = {
+      count: 0,
+      userInfo: {
+        name: "dummy name",
+        location: "default"
+      }
+    };
+
+    //console.log("child constructor");
+    return _this;
+  }
+  //use case -to make api call why? because we want to render first  very fast then fill all th data  
+  _createClass(UserClass, [{
+    key: "componentDidMount",
+    value: function () {
+      var _componentDidMount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var data, json;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return fetch("https://api.github.com/users/unnatimishra0");
+            case 2:
+              data = _context.sent;
+              _context.next = 5;
+              return data.json();
+            case 5:
+              json = _context.sent;
+              console.log(json);
+              //updating the state
+              this.setState({
+                userInfo: json
+              });
+
+              //api calls
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this);
+      }));
+      function componentDidMount() {
+        return _componentDidMount.apply(this, arguments);
+      }
+      return componentDidMount;
+    }()
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+      //destructuring and using props
+      var _this$state$userInfo = this.state.userInfo,
+        name = _this$state$userInfo.name,
+        location = _this$state$userInfo.location,
+        avatar_url = _this$state$userInfo.avatar_url;
+      var count = this.state.count;
+
+      //console.log("child render");
+
+      return /*#__PURE__*/_react.default.createElement("div", {
+        className: "user-card"
+      }, /*#__PURE__*/_react.default.createElement("h1", null, "Count:", count), /*#__PURE__*/_react.default.createElement("button", {
+        onClick: function onClick() {
+          // never update state variable directly like (this.set.count=this.set.count+1)
+          _this2.setState({
+            count: _this2.state.count + 1
+          });
+        }
+      }, " Count Increase"), /*#__PURE__*/_react.default.createElement("img", {
+        src: avatar_url
+      }), /*#__PURE__*/_react.default.createElement("h2", null, "Name :", name), /*#__PURE__*/_react.default.createElement("h2", null, " Location ", location), /*#__PURE__*/_react.default.createElement("h1", null, "Contact unnatimishra19@gmail.com"));
+    }
+  }]);
+  return UserClass;
+}(_react.default.Component);
+var _default = exports.default = UserClass;
+},{"react":"node_modules/react/index.js"}],"src/component/About.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = _interopRequireWildcard(require("react"));
+var _User = _interopRequireDefault(require("./User"));
+var _UserClass = _interopRequireDefault(require("./UserClass"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var About = /*#__PURE__*/function (_Component) {
+  _inherits(About, _Component);
+  var _super = _createSuper(About);
+  function About(props) {
+    _classCallCheck(this, About);
+    return _super.call(this, props); //console.log("parent constructor");
+  }
+  _createClass(About, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      //console.log(" parent component mounted");
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      //console.log("parent render");
+
+      return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h1", null, "about class component "), /*#__PURE__*/_react.default.createElement(_UserClass.default, {
+        name: "unnati class",
+        location: 'kanpur class'
+      }));
+    }
+  }]);
+  return About;
+}(_react.Component);
+/*
+parent constructor
+parent render
+  first child cons
+  first render
+
+  second cons
+  second render
+
+  ,dom updated> in single batch
+  first comp did mount
+  second conp did mount
+
+  -parent component did mount
+
+
+
+*/
 var _default = exports.default = About;
-},{"react":"node_modules/react/index.js"}],"src/component/ContactUs.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","./User":"src/component/User.js","./UserClass":"src/component/UserClass.js"}],"src/component/ContactUs.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37799,18 +38033,15 @@ var Cart = function Cart() {
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h1", null, "Cart page"));
 };
 var _default = exports.default = Cart;
-},{"react":"node_modules/react/index.js"}],"src/component/RestaurantMenu.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js"}],"src/utils/useRestaurantMenu.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _react = _interopRequireWildcard(require("react"));
-var _Shimmer = _interopRequireDefault(require("./Shimmer"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+var _react = require("react");
+var _constant = require("./constant");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -37821,7 +38052,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-var RestaurantMenu = function RestaurantMenu() {
+var RestaurantMenu = function RestaurantMenu(resId) {
   var _useState = (0, _react.useState)(null),
     _useState2 = _slicedToArray(_useState, 2),
     resInfo = _useState2[0],
@@ -37829,9 +38060,6 @@ var RestaurantMenu = function RestaurantMenu() {
   (0, _react.useEffect)(function () {
     fetchMenu();
   }, []);
-  // useEffect(()=>{
-  //     console.log(resInfo);
-  // },[resInfo])
   var fetchMenu = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
       var data, json;
@@ -37839,17 +38067,15 @@ var RestaurantMenu = function RestaurantMenu() {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return fetch("https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.4843&lng=80.3325332&restaurantId=74509&catalog_qa=undefined&submitAction=ENTER");
+            return fetch(_constant.MENU_API + resId);
           case 2:
             data = _context.sent;
             _context.next = 5;
             return data.json();
           case 5:
             json = _context.sent;
-            console.log(json);
             setResInfo(json.data);
-            // console.log('hello'+resInfo);
-          case 8:
+          case 7:
           case "end":
             return _context.stop();
         }
@@ -37859,23 +38085,71 @@ var RestaurantMenu = function RestaurantMenu() {
       return _ref.apply(this, arguments);
     };
   }();
-  // const {name}=resInfo?.cards[0]?.card?.card?.info;
-  // console.log(name);
-
-  // if (resInfo===null){
-  //   <Shimmer/>
-  // }
-
-  return resInfo === null ? /*#__PURE__*/_react.default.createElement(_Shimmer.default, null) : /*#__PURE__*/_react.default.createElement("div", {
-    className: "menu"
-  }, /*#__PURE__*/_react.default.createElement("h1", null, resInfo.cards[0].card.card.info.name));
+  return resInfo;
 };
-var _default = exports.default = RestaurantMenu;
-},{"react":"node_modules/react/index.js","./Shimmer":"src/component/Shimmer.js"}],"src/App.js":[function(require,module,exports) {
+var _default = exports.default = RestaurantMenu; // const fetchMenu=async()=>{
+//   const data=await fetch (MENU_API + resId);
+//   // const data=await fetch ("https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.4843&lng=80.3325332&restaurantId="+resId);
+//   // const data=await fetch ("https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.4843&lng=80.3325332&restaurantId=74509&catalog_qa=undefined&submitAction=ENTER");
+//   // const data=await fetch ("http://localhost:8000/data");
+//   const json=await data.json();
+//   console.log(json);
+//   setResInfo(json.data);
+// };
+},{"react":"node_modules/react/index.js","./constant":"src/utils/constant.js"}],"src/component/RestaurantMenu.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = _interopRequireWildcard(require("react"));
+var _Shimmer = _interopRequireDefault(require("./Shimmer"));
+var _reactRouterDom = require("react-router-dom");
+var _useRestaurantMenu = _interopRequireDefault(require("../utils/useRestaurantMenu"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+var RestaurantMenu = function RestaurantMenu() {
+  var _resInfo$cards$;
+  var _useParams = (0, _reactRouterDom.useParams)(),
+    resId = _useParams.resId;
+  //creating a custom hook which accepts resId and gives the resInfo data
+  var resInfo = (0, _useRestaurantMenu.default)(resId);
+  if (resInfo === null) return /*#__PURE__*/_react.default.createElement(_Shimmer.default, null);
+  var _ref = (resInfo === null || resInfo === void 0 || (_resInfo$cards$ = resInfo.cards[0]) === null || _resInfo$cards$ === void 0 || (_resInfo$cards$ = _resInfo$cards$.card) === null || _resInfo$cards$ === void 0 || (_resInfo$cards$ = _resInfo$cards$.card) === null || _resInfo$cards$ === void 0 ? void 0 : _resInfo$cards$.info) || {},
+    name = _ref.name,
+    cuisines = _ref.cuisines,
+    costForTwoMessage = _ref.costForTwoMessage;
+  var itemCards = resInfo.cards[2].groupedCard.cardGroupMap.REGULAR.cards[5].card.card.itemCards;
+  console.log(itemCards);
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "menu"
+  }, /*#__PURE__*/_react.default.createElement("h1", null, name), /*#__PURE__*/_react.default.createElement("h1", null, cuisines.join(",")), /*#__PURE__*/_react.default.createElement("p", null, costForTwoMessage), itemCards.map(function (item) {
+    return /*#__PURE__*/_react.default.createElement("li", {
+      key: id
+    }, item.card.info.name, " - ", " Rs ", item.card.info.price / 100 || item.card.info.deafultprice / 100);
+  }));
+};
+var _default = exports.default = RestaurantMenu;
+},{"react":"node_modules/react/index.js","./Shimmer":"src/component/Shimmer.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../utils/useRestaurantMenu":"src/utils/useRestaurantMenu.js"}],"src/component/Grocery.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 var _react = _interopRequireDefault(require("react"));
-var _client = _interopRequireDefault(require("react-dom/client"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var Grocery = function Grocery() {
+  return /*#__PURE__*/_react.default.createElement("h1", null, " ", "Our grocery online store, and we have a lot of child components inside this web page!!!");
+};
+var _default = exports.default = Grocery;
+},{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
+"use strict";
+
+var _react = _interopRequireWildcard(require("react"));
+var _reactDom = _interopRequireDefault(require("react-dom"));
 var _Header = _interopRequireDefault(require("./component/Header.js"));
 var _Body = _interopRequireDefault(require("./component/Body"));
 var _reactRouterDom = require("react-router-dom");
@@ -37885,7 +38159,19 @@ var _ContactUs = _interopRequireDefault(require("./component/ContactUs.js"));
 var _Error = _interopRequireDefault(require("./component/Error.js"));
 var _Cart = _interopRequireDefault(require("./component/Cart.js"));
 var _RestaurantMenu = _interopRequireDefault(require("./component/RestaurantMenu.js"));
+var _Grocery = _interopRequireDefault(require("./component/Grocery.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+//chunking
+//on demand loading
+//lazy loading
+// const file = `${__dirname/component/Grocery.js}`;
+
+// const Grocery = lazy(() => import(file));
+
+// const Grocery = lazy(() => import('./component/Grocery.js'));
+
 var AppLayout = function AppLayout() {
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "app"
@@ -37909,14 +38195,19 @@ var appRouter = (0, _reactRouterDom.createBrowserRouter)([{
   }, {
     path: '/restaurants/:resId',
     element: /*#__PURE__*/_react.default.createElement(_RestaurantMenu.default, null)
+  }, {
+    path: "/grocery",
+    element: /*#__PURE__*/_react.default.createElement(_react.Suspense, {
+      fallback: /*#__PURE__*/_react.default.createElement("h1", null, "Loading....")
+    }, /*#__PURE__*/_react.default.createElement(_Grocery.default, null))
   }],
   errorElement: /*#__PURE__*/_react.default.createElement(_Error.default, null)
 }]);
-var root = _client.default.createRoot(document.getElementById("root"));
+var root = _reactDom.default.createRoot(document.getElementById("root"));
 root.render( /*#__PURE__*/_react.default.createElement(_reactRouterDom.RouterProvider, {
   router: appRouter
 }));
-},{"react":"node_modules/react/index.js","react-dom/client":"node_modules/react-dom/client.js","./component/Header.js":"src/component/Header.js","./component/Body":"src/component/Body.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","./index.css":"src/index.css","./component/About.js":"src/component/About.js","./component/ContactUs.js":"src/component/ContactUs.js","./component/Error.js":"src/component/Error.js","./component/Cart.js":"src/component/Cart.js","./component/RestaurantMenu.js":"src/component/RestaurantMenu.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","./component/Header.js":"src/component/Header.js","./component/Body":"src/component/Body.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","./index.css":"src/index.css","./component/About.js":"src/component/About.js","./component/ContactUs.js":"src/component/ContactUs.js","./component/Error.js":"src/component/Error.js","./component/Cart.js":"src/component/Cart.js","./component/RestaurantMenu.js":"src/component/RestaurantMenu.js","./component/Grocery.js":"src/component/Grocery.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -37941,7 +38232,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53533" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49229" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

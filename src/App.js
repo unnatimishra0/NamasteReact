@@ -1,5 +1,5 @@
-import React from 'react';
-import  ReactDOM from 'react-dom/client';
+import React, { lazy,Suspense } from 'react';
+import  ReactDOM from 'react-dom';
 import Header from './component/Header.js';
 import Body from './component/Body';
 import { createBrowserRouter,RouterProvider ,Outlet} from 'react-router-dom';
@@ -9,6 +9,17 @@ import ContactUs from './component/ContactUs.js';
 import Error from './component/Error.js';
 import Cart from './component/Cart.js';
 import RestaurantMenu from './component/RestaurantMenu.js';
+import Grocery from './component/Grocery.js';
+
+
+//chunking
+//on demand loading
+//lazy loading
+// const file = `${__dirname/component/Grocery.js}`;
+
+// const Grocery = lazy(() => import(file));
+
+// const Grocery = lazy(() => import('./component/Grocery.js'));
 
 const AppLayout =()=>{
     return (
@@ -43,6 +54,14 @@ const appRouter = createBrowserRouter([
                 path: '/restaurants/:resId',
                 element:<RestaurantMenu/>
             },
+            {
+                path: "/grocery",
+                element: (
+                  <Suspense fallback={<h1>Loading....</h1>}>
+                    <Grocery />
+                  </Suspense>
+                ),
+              },
         ],
         errorElement:<Error/>
     },
