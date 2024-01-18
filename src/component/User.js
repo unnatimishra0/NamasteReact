@@ -2,9 +2,13 @@ import React from 'react'
 import { useState } from 'react';
 // using props of like this which is defined in about.js
 const User =({name})=>{
-    //defining  a state
+    //defining  a state and  for updating setconst
     const[count]=useState(0);
     const[count2]=useState(1);
+
+    useEffect(()=>{
+        //api calls
+    },[])
 
     return <div className="user-card">
         <h1></h1>

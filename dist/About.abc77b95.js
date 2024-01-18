@@ -136,13 +136,16 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // using props of like this which is defined in about.js
 var User = function User(_ref) {
   var name = _ref.name;
-  //defining  a state
+  //defining  a state and  for updating setconst
   var _useState = (0, _react.useState)(0),
     _useState2 = _slicedToArray(_useState, 1),
     count = _useState2[0];
   var _useState3 = (0, _react.useState)(1),
     _useState4 = _slicedToArray(_useState3, 1),
     count2 = _useState4[0];
+  useEffect(function () {
+    //api calls
+  }, []);
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "user-card"
   }, /*#__PURE__*/_react.default.createElement("h1", null), /*#__PURE__*/_react.default.createElement("h1", null, "Count=", count), /*#__PURE__*/_react.default.createElement("h1", null, "Count2=", count2), /*#__PURE__*/_react.default.createElement("h2", null, "Name ", name), /*#__PURE__*/_react.default.createElement("h2", null, " Location :kanpur"), /*#__PURE__*/_react.default.createElement("h1", null, "Contact unnatimishra19@gmail.com"));
@@ -268,6 +271,7 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _User = _interopRequireDefault(require("./User"));
 var _UserClass = _interopRequireDefault(require("./UserClass"));
+var _UserContext = _interopRequireDefault(require("../utils/UserContext"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -301,7 +305,12 @@ var About = /*#__PURE__*/function (_Component) {
     value: function render() {
       //console.log("parent render");
 
-      return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h1", null, "about class component "), /*#__PURE__*/_react.default.createElement(_UserClass.default, {
+      return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h1", null, "about class component "), /*#__PURE__*/_react.default.createElement("div", null, "LoggedInUser", /*#__PURE__*/_react.default.createElement(_UserContext.default.Consumer, null, function (_ref) {
+        var loggedInUser = _ref.loggedInUser;
+        return /*#__PURE__*/_react.default.createElement("h1", {
+          className: "text-xl font-bold"
+        }, loggedInUser);
+      })), /*#__PURE__*/_react.default.createElement(_UserClass.default, {
         name: "unnati class",
         location: 'kanpur class'
       }));
@@ -328,7 +337,7 @@ parent render
 
 */
 var _default = exports.default = About;
-},{"react":"node_modules/react/index.js","./User":"src/component/User.js","./UserClass":"src/component/UserClass.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","./User":"src/component/User.js","./UserClass":"src/component/UserClass.js","../utils/UserContext":"src/utils/UserContext.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -353,7 +362,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57854" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51654" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
